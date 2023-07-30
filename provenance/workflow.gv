@@ -1,0 +1,100 @@
+
+/* Start of top-level graph */
+digraph Workflow {
+rankdir=TB
+
+/* Title for graph */
+fontname=Courier; fontsize=18; labelloc=t
+label="PPP-Data-Cleaning-Workflow"
+
+/* Start of double cluster for drawing box around nodes in workflow */
+subgraph cluster_workflow_box_outer { label=""; color=black; penwidth=2
+subgraph cluster_workflow_box_inner { label=""; color=white
+
+/* Style for nodes representing atomic programs in workflow */
+node[shape=box style=filled fillcolor="#CCFFCC" peripheries=1 fontname=Courier]
+
+/* Nodes representing atomic programs in workflow */
+"trim-cells" [shape=record rankdir=LR label="{<f0> 'trim-cells' |<f1> Trim cells in columns City, Lender, and CD}"];
+"collapse-whitespace" [shape=record rankdir=LR label="{<f0> 'collapse-whitespace' |<f1> Collapse whitespace in columns City, Lender, and CD}"];
+"transform-jobs-reported-to-number" [shape=record rankdir=LR label="{<f0> 'transform-jobs-reported-to-number' |<f1> Convert JobsReported text cells to number cells}"];
+"transform-city-to-titlecase" [shape=record rankdir=LR label="{<f0> 'transform-city-to-titlecase' |<f1> Text transform on cells in column City using expression value.toTitlecase()}"];
+"cluster-cities" [shape=record rankdir=LR label="{<f0> 'cluster-cities' |<f1> Cluster similar City names}"];
+"cluster-lenders" [shape=record rankdir=LR label="{<f0> 'cluster-lenders' |<f1> Cluster similar Lender names}"];
+"import-data-to-python" [shape=record rankdir=LR label="{<f0> 'import-data-to-python' |<f1> Import data to Python}"];
+"remove-nan" [shape=record rankdir=LR label="{<f0> 'remove-nan' |<f1> Remove NaN values from dataframe}"];
+"type-conversion" [shape=record rankdir=LR label="{<f0> 'type-conversion' |<f1> Convert columns to correct type}"];
+"export-cleaned-data" [shape=record rankdir=LR label="{<f0> 'export-cleaned-data' |<f1> Export cleaned data to CSV}"];
+
+/* Style for nodes representing non-parameter data channels in workflow */
+node[shape=box style="rounded,filled" fillcolor="#FFFFCC" peripheries=1 fontname=Helvetica]
+
+/* Nodes for non-parameter data channels in workflow */
+"cleaned-data"
+"initial-dataset"
+"trimmed-dataset"
+"cleaned-whitespace-dataset"
+"numeric-transformed-dataset"
+"titlecased-city-dataset"
+"clustered-city-dataset"
+"OR-cleaned-dataset"
+"input-data"
+"removed-nan-data"
+"converted-data"
+
+/* Style for nodes representing parameter channels in workflow */
+node[shape=box style="rounded,filled" fillcolor="#FCFCFC" peripheries=1 fontname=Helvetica]
+
+/* Nodes representing parameter channels in workflow */
+"col-name:City"
+"col-name:Lender"
+"col-name:CD"
+"expression:value.trim()"
+"expression:value.replace(/[\\p{Zs}\\s]+/,'_')"
+"col-name:JobsReported"
+"expression:value.toNumber()"
+"expression:value.toTitlecase()"
+
+/* Edges representing connections between programs and channels */
+"trim-cells" -> "trimmed-dataset"
+"col-name:City" -> "trim-cells"
+"col-name:Lender" -> "trim-cells"
+"col-name:CD" -> "trim-cells"
+"expression:value.trim()" -> "trim-cells"
+"initial-dataset" -> "trim-cells"
+"collapse-whitespace" -> "cleaned-whitespace-dataset"
+"col-name:City" -> "collapse-whitespace"
+"col-name:Lender" -> "collapse-whitespace"
+"col-name:CD" -> "collapse-whitespace"
+"expression:value.replace(/[\\p{Zs}\\s]+/,'_')" -> "collapse-whitespace"
+"trimmed-dataset" -> "collapse-whitespace"
+"transform-jobs-reported-to-number" -> "numeric-transformed-dataset"
+"col-name:JobsReported" -> "transform-jobs-reported-to-number"
+"expression:value.toNumber()" -> "transform-jobs-reported-to-number"
+"cleaned-whitespace-dataset" -> "transform-jobs-reported-to-number"
+"transform-city-to-titlecase" -> "titlecased-city-dataset"
+"col-name:City" -> "transform-city-to-titlecase"
+"expression:value.toTitlecase()" -> "transform-city-to-titlecase"
+"numeric-transformed-dataset" -> "transform-city-to-titlecase"
+"cluster-cities" -> "clustered-city-dataset"
+"col-name:City" -> "cluster-cities"
+"titlecased-city-dataset" -> "cluster-cities"
+"cluster-lenders" -> "OR-cleaned-dataset"
+"col-name:Lender" -> "cluster-lenders"
+"clustered-city-dataset" -> "cluster-lenders"
+"import-data-to-python" -> "input-data"
+"db-path" -> "import-data-to-python"
+"OR-cleaned-dataset" -> "import-data-to-python"
+"remove-nan" -> "removed-nan-data"
+"input-data" -> "remove-nan"
+"type-conversion" -> "converted-data"
+"removed-nan-data" -> "type-conversion"
+"export-cleaned-data" -> "cleaned-data"
+"db-path" -> "export-cleaned-data"
+"converted-data" -> "export-cleaned-data"
+
+/* End of double cluster for drawing box around nodes in workflow */
+}}
+
+/* End of top-level graph */
+}

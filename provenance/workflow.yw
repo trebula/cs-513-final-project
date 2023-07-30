@@ -1,0 +1,80 @@
+#@begin PPP-Data-Cleaning-Workflow
+#@desc PPP-Data-Cleaning-Workflow
+#@param col-name:Lender
+#@param col-name:JobsReported
+#@param expression:value.toTitlecase()
+#@param expression:value.toNumber()
+#@param col-name:City
+#@param expression:value.trim()
+#@param col-name:CD
+#@param expression:value.replace(/[\\p{Zs}\\s]+/,'_')
+#@in initial-dataset
+#@out cleaned-data
+#@begin trim-cells
+#@desc Trim cells in columns City, Lender, and CD
+#@param col-name:City
+#@param col-name:Lender
+#@param col-name:CD
+#@param expression:value.trim()
+#@in initial-dataset
+#@out trimmed-dataset
+#@end trim-cells
+#@begin collapse-whitespace
+#@desc Collapse whitespace in columns City, Lender, and CD
+#@param col-name:City
+#@param col-name:Lender
+#@param col-name:CD
+#@param expression:value.replace(/[\\p{Zs}\\s]+/,'_')
+#@in trimmed-dataset
+#@out cleaned-whitespace-dataset
+#@end collapse-whitespace
+#@begin transform-jobs-reported-to-number
+#@desc Text transform on cells in column JobsReported using expression value.toNumber()
+#@desc Convert JobsReported text cells to number cells
+#@param col-name:JobsReported
+#@param expression:value.toNumber()
+#@in cleaned-whitespace-dataset
+#@out numeric-transformed-dataset
+#@end transform-jobs-reported-to-number
+#@begin transform-city-to-titlecase
+#@desc Text transform on cells in column City using expression value.toTitlecase()
+#@param col-name:City
+#@param expression:value.toTitlecase()
+#@in numeric-transformed-dataset
+#@out titlecased-city-dataset
+#@end transform-city-to-titlecase
+#@begin cluster-cities
+#@desc Cluster similar City names
+#@param col-name:City
+#@in titlecased-city-dataset
+#@out clustered-city-dataset
+#@end cluster-cities
+#@begin cluster-lenders
+#@desc Cluster similar Lender names
+#@param col-name:Lender
+#@in clustered-city-dataset
+#@out OR-cleaned-dataset
+#@end cluster-lenders
+#@begin import-data-to-python
+#@desc Import data to Python
+#@param db-path
+#@in OR-cleaned-dataset
+#@out input-data
+#@end import-data-to-python
+#@begin remove-nan
+#@desc Remove NaN values from dataframe
+#@in input-data
+#@out removed-nan-data
+#@end remove-nan
+#@begin type-conversion
+#@desc Convert columns to correct type
+#@in removed-nan-data
+#@out converted-data
+#@end type-conversion
+#@begin export-cleaned-data
+#@desc Export cleaned data to CSV
+#@param db-path
+#@in converted-data
+#@out cleaned-data
+#@end export-cleaned-data
+#@end PPP-Data-Cleaning-Workflow

@@ -1,0 +1,58 @@
+#@begin Linear_OR
+#@desc Linear OpenRefine Workflow
+#@param col-name:Lender
+#@param col-name:JobsReported
+#@param expression:value.toTitlecase()
+#@param expression:value.toNumber()
+#@param col-name:City
+#@param expression:value.trim()
+#@param col-name:CD
+#@param expression:value.replace(/[\\p{Zs}\\s]+/,'_')
+#@in initial-dataset
+#@out cleaned-dataset
+#@begin trim-cells
+#@desc Trim cells in columns City, Lender, and CD
+#@param col-name:City
+#@param col-name:Lender
+#@param col-name:CD
+#@param expression:value.trim()
+#@in initial-dataset
+#@out trimmed-dataset
+#@end trim-cells
+#@begin collapse-whitespace
+#@desc Collapse whitespace in columns City, Lender, and CD
+#@param col-name:City
+#@param col-name:Lender
+#@param col-name:CD
+#@param expression:value.replace(/[\\p{Zs}\\s]+/,'_')
+#@in trimmed-dataset
+#@out cleaned-whitespace-dataset
+#@end collapse-whitespace
+#@begin transform-jobs-reported-to-number
+#@desc Text transform on cells in column JobsReported using expression value.toNumber()
+#@desc Convert JobsReported text cells to number cells
+#@param col-name:JobsReported
+#@param expression:value.toNumber()
+#@in cleaned-whitespace-dataset
+#@out numeric-transformed-dataset
+#@end transform-jobs-reported-to-number
+#@begin transform-city-to-titlecase
+#@desc Text transform on cells in column City using expression value.toTitlecase()
+#@param col-name:City
+#@param expression:value.toTitlecase()
+#@in numeric-transformed-dataset
+#@out titlecased-city-dataset
+#@end transform-city-to-titlecase
+#@begin cluster-cities
+#@desc Cluster similar City names
+#@param col-name:City
+#@in titlecased-city-dataset
+#@out clustered-city-dataset
+#@end cluster-cities
+#@begin cluster-lenders
+#@desc Cluster similar Lender names
+#@param col-name:Lender
+#@in clustered-city-dataset
+#@out cleaned-dataset
+#@end cluster-lenders
+#@end Linear_OR
