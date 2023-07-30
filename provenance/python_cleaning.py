@@ -43,6 +43,25 @@ def main(db_pth="data"):
     df = df.dropna()
     # @END remove_nan
 
+    # @BEGIN remove_invalid_cities
+    # @IN df  @AS removed_nan_data
+    # @OUT df  @AS removed_invalid_cities_data
+    # read in cities.csv
+    cities = pd.read_csv(f"{db_pth}/cities.csv")
+
+    # create set of valid cities
+    valid_cities = cities["name"].to_list()
+
+    # remove all rows with invalid cities
+    df_with_invalid_cities = df.copy(deep=True)
+    df = df[df["City"].isin(valid_cities)]
+
+    # print differences
+    print(
+        f"Number of rows with invalid cities: {len(df_with_invalid_cities) - len(df)}"
+    )
+    # @END remove_invalid_cities
+
     # @BEGIN type_conversion
     # @IN df  @AS removed_nan_data
     # @OUT df  @AS converted_data
