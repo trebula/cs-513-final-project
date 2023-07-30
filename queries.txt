@@ -1,0 +1,4 @@
+SELECT * FROM df WHERE City REGEXP '[0-9]+|^[.!?\\-_]$';
+SELECT * FROM df WHERE CD NOT IN ('HI-01', 'HI-02');
+SELECT * FROM df WHERE typeof(JobsReported) != 'real' AND typeof(JobsReported) != 'integer';
+SELECT * FROM df WHERE NonProfit NOT IN ('Y', 'N') OR NonProfit IS NULL;
